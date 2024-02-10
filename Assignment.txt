@@ -34,3 +34,18 @@
     db.Products.find({},{_id:0,ProductName:1,Price:1})
 
 
+7.Retrieve the names of customers along with their city.
+
+
+    db.Customer.find({},{_id:0,CostomerName:1,City:1})
+
+
+8.Retrieve the orders placed by John Doe (CustomerID 1).
+
+
+    db.Orders.find({CostomerId:1})
+
+
+9.Retrieve the customers who have placed orders.
+
+
