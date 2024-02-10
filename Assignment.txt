@@ -1,0 +1,25 @@
+1.Retrieve the names of all customers. 
+
+
+    db.Customer.find({},{_id:0,CostomerName:1})
+
+
+2.Retrieve the total number of orders placed.
+
+
+    db.Orders.find().count()
+
+
+3.Retrieve the details of the order with OrderID 1003.
+
+
+    db.Orders.find({orderId:1003})
+
+
+4.Retrieve the names of customers who are from Beijing.
+
+
+    db.Customer.find({City:'Baijing'})
+
+
+    
