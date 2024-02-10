@@ -49,3 +49,24 @@
 9.Retrieve the customers who have placed orders.
 
 
+
+
+
+10.Retrieve the orders placed by customers from Shanghai.
+
+
+
+
+
+
+11.Retrieve the highest price from the Products table
+
+
+    db.Product.aggregate([{$group:{_id:0,high:{$max:'$Price'}}}])
+
+
+12.Retrieve the average price of all products.
+
+    db.Product.aggregate([{$group:{_id:0,average:{$avg:'$Price'}}}])
+
+
