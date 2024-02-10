@@ -22,4 +22,15 @@
     db.Customer.find({City:'Baijing'})
 
 
-    
+5.Retrieve the total price of all orders.
+
+
+    db.Products.aggregate([{$group:{_id:0,total:{$sum:"$Price"}}}])
+
+
+6.Retrieve the product names and their prices.
+
+
+    db.Products.find({},{_id:0,ProductName:1,Price:1})
+
+
