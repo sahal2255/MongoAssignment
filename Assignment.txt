@@ -55,8 +55,7 @@
 10.Retrieve the orders placed by customers from Shanghai.
 
 
-
-
+    db.Customer.aggregate([{$match:{City:'Shaghai'}},{$lookup:{from:'Orders',localField:'id',foreignField:'CostomerId',as:'order'}}])
 
 
 11.Retrieve the highest price from the Products table
@@ -67,6 +66,101 @@
 
 12.Retrieve the average price of all products.
 
+   
     db.Product.aggregate([{$group:{_id:0,average:{$avg:'$Price'}}}])
 
 
+13.Retrieve the details of customers who have placed orders.
+
+
+    db.Customer.aggregate([{$lookup:{from:'Orders',localField:'id',foreignField:'CostomerId',as:'orders'}},{$match:{orders:{$exists:true,$not:{$size:0}}}}])
+
+
+15.Retrieve the customer names along with the total order value.
+
+
+    db.Orders.aggregate([{$lookup:{from:'Customer',localField:'CostomerId',foreignField:'id',as:'orders'}},{$unwind:'$orders'},{$group:{_id:'$orders.CostomerName',total:{$sum:1}}}])
+
+
+16.Retrieve the orders placed in descending order of their total value.
+
+
+    db.Orders.find().sort({Total:-1})
+
+
+17.Retrieve the product names along with their prices, sorted by price in descending order.
+
+
+    db.Products.find().sort({Price:-1})
+
+
+18.Retrieve the names of customers along with the number of orders they have placed.
+
+
+    db.Orders.aggregate([{$group:{_id:'$CostomerId',num:{$sum:1}}},{$lookup:{from:'Customer',localField:'_id',foreignField:'id',as:'costomer'}},{$unwind:'$costomer'},{$project:{_id:0,CostomerName:'$costomer.CostomerName',num:1}}])
+
+
+19.Retrieve the orders placed by customers from London.
+
+
+    db.Customer.aggregate([{$match:{City:'London'}},{$lookup:{from:'Orders',localField:'id',foreignField:'CostomerId',as:'orders'}},{$unwind:'$orders'},{$project:{_id:'$orders.OrderId',costomer:'$CostomerName',total:'$orders.Total'}}])
+
+
+20.Insert a new customer with ID 5, name 'Emma Wilson', and city 'Paris'.
+
+
+    db.Customer.insertOne({id:5,CostomerName:'Emma Wilsom',City:'Paris'})
+
+
+21.Update the city of the customer with ID 3 to 'Tokyo'.
+
+
+    db.Customer.update({id:3},{$set:{City:'Tokyo'}})
+
+
+21.Update the city of the customer with ID 3 to 'Tokyo'.
+
+
+    db.Products.update({ProductID:2},{$set:{Price:900}})
+
+
+23.Delete the order with OrderID 1002
+
+
+    db.Orders.remove({OrderID:1002})
+
+
+24.Retrieve the names of customers and their cities using aliases.
+
+
+    db.Customer.aggregate([{$project:{_id:0,Name:'$CostomerName',Place:'$City'}}])
+
+
+25.Retrieve the customer names along with their total order value, sorted by order value in descending order.
+
+
+     db.Orders.aggregate([ { $group: { _id: "$CostomerId", totalOrderValue: { $sum: "$Total" } } }, { $lookup: { from: "Customer", localField: "_id", foreignField: "id", as: "customer" } }, { $unwind:"$customer"}, { $project: { _id: 0, CustomerName: "$customer.CostomerName", totalOrderValue: 1 } },{$sort:{totalOrderValue:-1}}] )
+
+
+26.Retrieve the customer names along with the number of orders they have placed, sorted by the number of orders in ascending order.
+
+
+    db.Orders.aggregate([ { $group: { _id: "$CostomerId",Orders: { $sum: 1 } } }, { $lookup: { from: "Customer", localField: "_id", foreignField: "id", as: "customer" } }, { $unwind: "$customer"},{$project:{_id:0,CostomerName:"$customer.CostomerName",Orders:1}},{$sort:{Orders:1}}])
+
+
+27.Retrieve the customer names along with the average order value, sorted by the average order value in descending order.
+
+
+     db.Orders.aggregate([ { $group: { _id: "$CostomerId", totalvalue: { $sum: "$Total" }, numOrders: { $sum: 1 } } }, { $lookup: { from: "Customer", localField: "_id", foreignField: "CostomerId", as: "costomer" } }, { $unwind: "$costomer" }, { $project: { _id: 0, CostomerName: "$costomer.CostomerName", avgOdrvalue: { $divide: ["$totalvalue", "$numOrders"] } } }, { $sort: { avgOdrvalue: -1 } }] )
+
+
+28.Calculate the total price of all orders placed by customers from Beijing
+
+
+    db.Orders.aggregate([ { $lookup: { from: "Customer", localField: "CostomerId", foreignField: "id", as: "costomer" } }, { $unwind: "$costomer" }, { $match: { "costomer.City": "Baijing" } },{$group:{ _id: null, totalOrderPrice: { $sum: "$Total" } } } ])
+
+
+29.Calculate the average price of products in the Tablet category.
+
+
+    db.Products.aggregate([{$match:{ProductName:'Tablet'}},{$group:{_id:0,avg:{$avg:'$Price'}}}])
