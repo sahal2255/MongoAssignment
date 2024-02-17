@@ -1,0 +1,92 @@
+1-Retrieve the details of employees along with their corresponding departments.
+
+
+    db.Employees.aggregate([{$lookup:{from:'Department',localField:'ID',foreignField:'ID',as:'matched'}},{$unwind:'$matched'}])  
+
+
+2-Retrieve the employees who hold managerial positions.
+
+
+    db.Employees.find({JobTitle:'Manager'})
+
+
+3-Retrieve the employees and their salaries in descending order of salary.
+
+
+    db.Employees.find().sort({salary:-1})
+
+
+4-Retrieve the total salary of all employees.
+
+
+    db.Employees.aggregate([{$group:{_id:0,total:{$sum:'$salary'}}}])
+
+
+5-Retrieve the average salary of employees in each department.
+
+
+    db.Employees.aggregate([{$group:{_id:0,average:{$avg:'$salary'}}}])
+
+
+6-Retrieve the employee names and their corresponding department names using table aliases.
+
+
+    db.Employees.aggregate([{$lookup:{from:'Department',localField:'ID',foreignField:'ID',as:'employ'}},{$unwind:'$employ'},{$project:{_id:'$lastName',job:'$employ.department'}}])
+
+
+7-Retrieve the employees who work in the IT department.
+
+
+    db.Department.aggregate([{$match:{JobTitle:'IT'}},{$lookup:{from:'Employees',localField:'ID',foreignField:'ID',as:'work'}}])
+
+    db.Employees.aggregate([{$lookup:{from:'Department',localField:'ID',foreignField:'ID',as:'employ'}},{$unwind:'$employ'},{$match:{'employ.department':'IT'}},{$project:{_id:'$lastName'}}])
+
+
+8-Retrieve the employees' and their managers' names.
+
+
+    db.Employees.find()
+
+
+9-Retrieve the total salary of employees in the Sales department.
+
+
+    db.Employees.aggregate([{$match:{department:'Sales'}},{$lookup:{from:'Department',localField:'ID',foreignField:'ID',as:'sale'}},{$project:{_id:'$ID',sala:'$sale.salary'}}])
+
+
+10-Retrieve the job titles and the number of employees in each job title.
+
+
+    db.Employees.aggregate([{$group:{_id:'$JobTitle',count:{$sum:1}}}])
+
+
+11-Retrieve the employees who have a higher salary than their managers.
+12-Retrieve the employees who have the same job title as their managers.
+13-Retrieve the employees and their departments, showing all employees even if they don't belong to any department.
+14-Retrieve the employees and their departments, showing only the employees who belong to a department.
+15-Retrieve the employees who don't have a department assigned.
+16-Retrieve the employees and their salaries, showing 'Not available' for employees without a salary value.
+17-Retrieve the employees and their departments, showing 'No department' for employees without a department.
+18-Retrieve the employees who have the highest salary in each department.
+
+
+    db.Employees.aggregate([{$group:{_id:0,highest:{$max:'$salary'}}}])
+
+
+19-Retrieve the employees and their departments, showing 'No manager' for employees without a manager.
+20-Retrieve the employees and their departments, showing 'No manager' for employees without a manager and 'No department' for employees without a department.
+21-Retrieve the employees and their departments, including all employees and departments, even if there are no matches in the join (FULL OUTER JOIN).
+22-Retrieve the employees and their departments, including only the employees and departments that have a match in the join (INNER JOIN).
+23-Retrieve the employees and their departments, including all employees and their corresponding departments, and 'No department' for employees without a department (LEFT JOIN).
+24-Retrieve the employees and their departments, including all departments and their corresponding employees, and 'No employee' for departments without any employees (RIGHT JOIN).
+25-Calculate the average salary of employees in each department, showing 'No employees' for departments without any employees.
+26-Calculate the total salary of employees in the IT department.
+
+
+    db.Department.aggregate([{$match:{department:'IT'}},{$lookup:{from:'Employees',localField:'ID',foreignField:'ID',as:'matchn'}},{$project:{_id:1,total:{$sum:'$matchn.salary'}}}])
+
+
+27-Retrieve the employees and their job titles in uppercase.
+28-Retrieve the employees and their salaries, showing the salary with a 10% increase.
+29-Retrieve the employees and their salaries, showing the salary with a 5% decrease.
+30-Retrieve the employees and their salaries, showing the salary rounded to the nearest hundred.
